@@ -1,0 +1,14 @@
+<% include ./partials/header %>
+<ul>
+  <% assignments.forEach(assignment => { %>
+    <li>
+      <strong><%= assignment.title %></strong> - <%= assignment.status %> (Due: <%= assignment.dueDate.toDateString() %>)
+      <a href="/edit/<%= assignment._id %>">Edit</a>
+      <form action="/delete/<%= assignment._id %>" method="POST" style="display: inline;">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
+<% include ./partials/footer %>
+

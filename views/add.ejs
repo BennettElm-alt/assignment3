@@ -1,0 +1,11 @@
+<% include ./partials/header %>
+<form action="/add" method="POST">
+  <label>Title:</label>
+  <input type="text" name="title" required>
+  <label>Description:</label>
+  <textarea name="description"></textarea>
+  <label>Due Date:</label>
+  <input type="date" name="dueDate" required>
+  <button type="submit">Add Assignment</button>
+</form>
+<% include ./partials/footer %>
