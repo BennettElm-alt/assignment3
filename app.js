@@ -25,11 +25,11 @@ app.use('/', require('./routes/assignments'));
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
 
-
+require('dotenv').config();
 
 mongoose.connect(process.env.DB_URI, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
 })
-.then(() => console.log('MongoDB connected'))
+.then(() => console.log('MongoDB Atlas connected'))
 .catch(err => console.error('MongoDB connection error:', err));
