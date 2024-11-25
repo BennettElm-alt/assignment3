@@ -1,40 +1,73 @@
+
 const express = require('express');
 const router = express.Router();
-const Assignment = require('../models/Assignment');
+const Assignment = require('../models/Assignment'); // assignment model
 
-// Home / list
+
+// Home show all assignments
 router.get('/', async (req, res) => {
-  const assignments = await Assignment.find();
-  res.render('index', { assignments });
+  try {
+    const assignments = await Assignment.find();
+    res.render('index', { assignments }); // load index page assignments
+  } catch (err) {
+    console.error('Error fetching assignments:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-// add form
+
 router.get('/add', (req, res) => {
-  res.render('add');
+  res.render('add'); // load add assignment page
 });
 
-//add
+
 router.post('/add', async (req, res) => {
-  await new Assignment(req.body).save();
-  res.redirect('/');
+  try {
+    const newAssignment = new Assignment(req.body);
+    await newAssignment.save();
+    res.redirect('/'); // move to list page after edit
+  } catch (err) {
+    console.error('Error adding assignment:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-// edit
+// display edit form
 router.get('/edit/:id', async (req, res) => {
-  const assignment = await Assignment.findById(req.params.id);
-  res.render('edit', { assignment });
+  try {
+    const assignment = await Assignment.findById(req.params.id);
+    if (!assignment) {
+      return res.status(404).send('Assignment not found');
+    }
+    res.render('edit', { assignment }); 
+  } catch (err) {
+    console.error('Error fetching assignment for edit:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-// update
+// Update: Handle form submission for editing an assignment
 router.post('/edit/:id', async (req, res) => {
-  await Assignment.findByIdAndUpdate(req.params.id, req.body);
-  res.redirect('/');
+  try {
+    await Assignment.findByIdAndUpdate(req.params.id, req.body);
+    res.redirect('/'); // move to the list page after update
+  } catch (err) {
+    console.error('Error updating assignment:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-// delete
+
+
+
 router.post('/delete/:id', async (req, res) => {
-  await Assignment.findByIdAndDelete(req.params.id);
-  res.redirect('/');
+  try {
+    await Assignment.findByIdAndDelete(req.params.id);
+    res.redirect('/'); 
+  } catch (err) {
+    console.error('Error deleting assignment:', err);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 module.exports = router;

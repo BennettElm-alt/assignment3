@@ -1,41 +1,43 @@
-require('dotenv').config();
 
+require('dotenv').config(); 
 const express = require('express');
-app.use(express.json());
-
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+const path = require('path'); 
 
-dotenv.config();
 
 const app = express();
 
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
-app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(express.json()); 
+app.use(express.static('public')); 
+app.set('view engine', 'ejs'); 
 
-app.post('/', async (req, res) => {
-  const task = new Task(req.body);
-  await task.save();
-  res.send(task);
-});
-
-mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
-
-// route
-app.use('/', require('./routes/assignments'));
-
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
-
-
-
+// connect to mongo
 mongoose.connect(process.env.DB_URI, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
 })
-.then(() => console.log('MongoDB Atlas connected'))
+.then(() => console.log('MongoDB Connected'))
 .catch(err => console.error('MongoDB connection error:', err));
+
+
+app.post('/', async (req, res) => {
+  try {
+    
+    const Task = require('./models/Task'); 
+    const task = new Task(req.body);
+    await task.save();
+    res.send(task);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// routes
+app.use('/', require('./routes/assignments')); 
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
